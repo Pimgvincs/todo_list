@@ -4,6 +4,8 @@ import './App.css';
 function App() {
   const [tasks, setTasks] = useState([]); /// Arrayt of tasks
   const [task, setTask] = useState(''); /// For every individual task
+  const [taskEdit, setTaskEdit] = useState(null) /// will get id of task what needs to be edited
+  const [textEdit, setTextEdit] = useState("") /// for text, what needs to be edited
 
   function handleSubmit(e) {
     e.preventDefault() /// doesnt reload web page
@@ -30,6 +32,17 @@ function App() {
       });
       setTasks(updateTasks)
    }
+   function editTask(id) { /// cpoy all tasks, and modified edited task
+     let updatedTasks = [...tasks].map((task) =>{
+       if(task.id === id) {
+         task.text = textEdit
+       }
+       return task
+     })
+     setTasks(updatedTasks)
+     setTaskEdit(null) /// reset
+     setTextEdit("")
+   }
 
   return (
     <div className="App">
@@ -44,16 +57,28 @@ function App() {
         {tasks.map((task)=> 
           <div key={task.id}> {/*Every task have his own key */}
 
+            {taskEdit === task.id ? ( /// if press edit btn, then new input , otherwise old text
+             <div>
+              <input 
+                type="text"
+                onChange={(e) => setTextEdit(e.target.value)}
+                value={textEdit}
+              />
+              <button onClick={() => editTask(task.id)}>Submit</button>
+             </div> 
+            ) : (
             <div className='task_text'>
               {task.text}  {/*Show task text  */}
-            </div>
-            <button onClick={() =>deleteTask(task.id)}>Delete</button> {/*Delete button with function */} 
-            <input
-              type="checkbox"
-              id="completed"
-              checked = {task.completed}
-              onChange={()=> ifCompleted(task.id)}            
-              />
+              <input
+                type="checkbox"
+                id="completed"
+                checked = {task.completed}
+                onChange={()=> ifCompleted(task.id)} /// when its checked, then function     
+                />
+                <button className='editBtn' onClick={() => setTaskEdit(task.id)}> Edit Task</button>
+                <button className='delBtn' onClick={() =>deleteTask(task.id)}>Delete</button> {/*Delete button with function */} 
+            </div>)}
+              
           </div>)}
     </div>
   );
