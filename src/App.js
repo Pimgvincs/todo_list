@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import './App.css'; 
 
 function App() {
   const [tasks, setTasks] = useState([]); /// Arrayt of tasks
   const [task, setTask] = useState(''); /// For every individual task
   const [taskEdit, setTaskEdit] = useState(null) /// will get id of task what needs to be edited
   const [textEdit, setTextEdit] = useState("") /// for text, what needs to be edited
+
+
+  useEffect(() => {
+    const getSaved = localStorage.getItem("Tasks") /// get items from storage
+    const getTasks = JSON.parse(getSaved) /// from json to js
+
+    if(getTasks) { /// if user already has a tasks
+      setTasks(getTasks);
+    }
+
+  }, []);
+
+
+
+  useEffect(() => {  /// saved our tasks in local storage
+    const saved = JSON.stringify(tasks) /// from js to json
+    localStorage.setItem("Tasks", saved) /// save in local storage
+  }, [tasks])
 
   function handleSubmit(e) {
     e.preventDefault() /// doesnt reload web page
@@ -41,7 +59,7 @@ function App() {
      })
      setTasks(updatedTasks)
      setTaskEdit(null) /// reset
-     setTextEdit("")
+     setTextEdit("")  /// reset
    }
 
   return (
